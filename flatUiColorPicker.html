@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat UI Colors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-family: 'Outfit', sans-serif;
+            --bg-color: #f4f4f5;
+            --text-color: #27272a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #71717a;
+            font-size: 1.1rem;
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        .color-card {
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s, z-index 0.2s;
+        }
+
+        .color-card:hover {
+            z-index: 10;
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .copy-label {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .color-card:hover .copy-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .color-info {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #18181b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast-color-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Full Screen Overlay Animation */
+        .copy-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: currentColor;
+            z-index: 50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .copy-overlay.active {
+            opacity: 1;
+            /* Fade out handled by JS mostly, but we can animate enter here */
+        }
+
+        .overlay-msg {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            transform: scale(0.5);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .copy-overlay.active .overlay-msg {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .overlay-hex {
+            font-size: 2rem;
+            margin-top: 1rem;
+            font-weight: 400;
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .palette-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Flat UI Colors</h1>
+        <p>Click on any color to copy the HEX code</p>
+    </header>
+
+    <div class="palette-grid" id="paletteGrid">
+        <!-- Rendered by JS -->
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="copy-overlay" id="copyOverlay">
+        <div class="overlay-msg">
+            <div>COPIED!</div>
+            <div class="overlay-hex" id="overlayHex">#FFFFFF</div>
+        </div>
+    </div>
+
+    <script>
+        const colors = [
+            // Oranges
+            { name: 'Sunkist', hex: '#f39c12' },
+            { name: 'Pumpkin', hex: '#d35400' },
+            { name: 'gray-orange', hex: '#CCAA7A' },
+            // Greens
+            { name: 'Emerald', hex: '#2ecc71' },
+            { name: 'Nephritis', hex: '#27ae60' },
+            { name: 'Green Sea', hex: '#16a085' },
+            // Blues
+            { name: 'Calm', hex: '#3498db' },
+            { name: 'Turquoise', hex: '#1abc9c' },
+            { name: 'Cyan', hex: '#3498db' },
+            // Reds
+            { name: 'Sun', hex: '#f1c40f' },
+            { name: 'Orange', hex: '#e67e22' },
+            { name: 'Red', hex: '#e74c3c' },
+        ];
+
+        const paletteGrid = document.getElementById('paletteGrid');
+        const overlay = document.getElementById('copyOverlay');
+        const overlayHex = document.getElementById('overlayHex');
+        const toastContainer = document.getElementById('toastContainer');
+
+        function createColorCards() {
+            colors.forEach(color => {
+                const card = document.createElement('div');
+                card.className = 'color-card';
+                card.style.backgroundColor = color.hex;
+
+                card.innerHTML = `
+                    <span class="copy-label">Copy</span>
+                    <div class="color-info">
+                        <span>${color.name}</span>
+                        <span>${color.hex}</span>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => handleCopy(color.hex));
+                paletteGrid.appendChild(card);
+            });
+        }
+
+        function handleCopy(hex) {
+            navigator.clipboard.writeText(hex).then(() => {
+                triggerOverlay(hex);
+                // triggerToast(hex); // Overlay is enough, but user might want toast. Let's do overlay for "wow" factor.
+            });
+        }
+
+        function triggerOverlay(hex) {
+            overlay.style.color = hex; // Set background to color (using currentColor)
+            overlay.style.backgroundColor = hex;
+            overlayHex.textContent = hex;
+
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 800);
+        }
+
+        // Initialize
+        createColorCards();
+    </script>
+</body>
+
+</html>
