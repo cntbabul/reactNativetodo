@@ -14,7 +14,9 @@
                 "buildType": "apk"
             },
             "env": {
-                "NPM_CONFIG_LEGACY_PEER_DEPS": "true"
+                "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+                "EXPO_PUBLIC_CONVEX_URL": "https://unique-puffin-597.convex.cloud",
+                "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_test_cXVpY2steWFrLTE5LmNsZXJrLmFjY291bnRzLmRldiQ"
             }
         },
         "production": {}

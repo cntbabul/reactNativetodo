@@ -233,6 +233,33 @@ export const createHomeStyles = (colors: ColorScheme) => {
             lineHeight: 24,
             color: colors.textMuted,
         },
+        tabContainer: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            paddingVertical: 12,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+            backgroundColor: 'transparent',
+        },
+        tabButton: {
+            paddingVertical: 8,
+            paddingHorizontal: 16,
+            borderRadius: 20,
+        },
+        tabButtonActive: {
+            backgroundColor: colors.primary,
+        },
+        tabText: {
+            fontSize: 16,
+            fontWeight: '600',
+            color: colors.textMuted,
+        },
+        tabTextActive: {
+            color: 'white',
+        },
+        pageContainer: {
+            flex: 1,
+        },
     });
 
     return styles;
